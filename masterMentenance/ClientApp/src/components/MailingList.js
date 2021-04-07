@@ -3,6 +3,7 @@ import {
   FormControl,
   Table,
   Button,
+  ButtonGroup,
   InputGroup,
   Alert,
   Container,
@@ -10,16 +11,16 @@ import {
   Col,
 } from 'react-bootstrap';
 import { DataKbnSelect } from '../elemetes/Select';
-import { chekInputData, sleep } from '../util/Common';
+import { checkInputData, sleep } from '../util/Common';
 
 const MailingList = () => {
   const currentKbn = useRef('');
   const inputUserName = useRef();
-  const inputMailAdress = useRef();
+  const inputMailAddress = useRef();
 
   const [dispError, setDispError] = useState('0');
   const [updateItem, setUpdateItem] = useState({});
-  const [dataKbnList, setDataKbnlist] = useState([]);
+  const [dataKbnList, setDataKbnList] = useState([]);
   const [dataList, setDatalist] = useState([]);
 
   useEffect(() => {
@@ -28,41 +29,38 @@ const MailingList = () => {
 
   useEffect(() => {
     inputUserName.current.value = '';
-    inputMailAdress.current.value = '';
+    inputMailAddress.current.value = '';
     if (updateItem) {
       inputUserName.current.value = updateItem.USER_NAME || '';
-      inputMailAdress.current.value = updateItem.MAIL_ADDRESS || '';
+      inputMailAddress.current.value = updateItem.MAIL_ADDRESS || '';
     }
   }, [dataList, updateItem]);
-
-  // useEffect(() => {
-  //   if (updateItem) {
-  //     inputUserName.current.value = updateItem.USER_NAME || '';
-  //     inputMailAdress.current.value = updateItem.MAIL_ADDRESS || '';
-  //   }
-  // }, [updateItem]);
 
   const getDataKbn = async () => {
     try {
       const response = await fetch('mastermentenance?TYPE=GET_DATA_KBN');
       const data = await response.json();
 
-      setDataKbnlist(data.LIST || []);
+      setDataKbnList(data.LIST || []);
     } catch {
-      setDataKbnlist([]);
+      setDataKbnList([]);
     }
   };
 
-  const handleKbnSelect = useCallback((e) => {
-    currentKbn.current = e.target.value;
-    getMailingList();
-  }, []);
+  const handleKbnSelect = useCallback(
+    (e) => {
+      currentKbn.current = e.target.value;
+      getMailingList();
+    },
+    [currentKbn]
+  );
 
   const getMailingList = async () => {
     try {
-      const response = await fetch('mastermentenance?TYPE=GET&DATA_KBN=' + currentKbn.current);
+      const response = await fetch(
+        'mastermentenance?TYPE=GET&DATA_KBN=' + currentKbn.current
+      );
       const data = await response.json();
-      //console.log(data);
 
       setDatalist(data.LIST || []);
     } catch {
@@ -72,7 +70,6 @@ const MailingList = () => {
   };
 
   const handleSelectUpdate = (item) => {
-    console.log(item);
     setUpdateItem(item);
   };
 
@@ -80,11 +77,41 @@ const MailingList = () => {
     setUpdateItem({});
   };
 
+  const handleItemMode = (index, at) => {
+    // console.log(index, at);
+    if (
+      (index === 0 && at === -1) ||
+      (index === dataList.length - 1 && at === 1)
+    ) {
+      return false;
+    }
+    if (dataList && dataList.length > 1) {
+      const item = dataList[index];
+      const tempList = [...dataList].filter((v, i) => i !== index);
+
+      const targetIndex = index + at;
+      const newList = [];
+      tempList.forEach((v, i) => {
+        if (i === targetIndex) {
+          newList.push(item);
+        }
+        newList.push(v);
+      });
+
+      setDatalist(newList);
+    }
+  };
+
   const handleSubmitDeleteItem = async ({ ID }) => {
+    const result = window.confirm('削除実行しますか？');
+    if (!result) {
+      return false;
+    }
+
     const fd = new FormData();
     fd.append('TYPE', 'DELETE');
     fd.append('ID', ID);
-    //fd.append('ITEM', JSON.stringify({ item }));
+    // console.log(...fd.entries());
 
     const response = await fetch('mastermentenance', {
       method: 'POST',
@@ -104,9 +131,12 @@ const MailingList = () => {
     handleReset();
   };
 
-  const handleSubumitUpdate = async () => {
+  const handleSubmitUpdate = async () => {
     if (
-      !chekInputData(inputUserName.current.value, inputMailAdress.current.value)
+      !checkInputData(
+        inputUserName.current.value,
+        inputMailAddress.current.value
+      )
     ) {
       setDispError('1');
       // Alert表示
@@ -124,7 +154,7 @@ const MailingList = () => {
         ...updateItem,
         DATA_KBN: currentKbn.current,
         USER_NAME: inputUserName.current.value,
-        MAIL_ADDRESS: inputMailAdress.current.value,
+        MAIL_ADDRESS: inputMailAddress.current.value,
       })
     );
 
@@ -146,7 +176,7 @@ const MailingList = () => {
           console.log(v);
           if (v.ID === updateItem.ID) {
             v.USER_NAME = inputUserName.current.value;
-            v.MAIL_ADDRESS = inputMailAdress.current.value;
+            v.MAIL_ADDRESS = inputMailAddress.current.value;
           }
           return v;
         }) || [];
@@ -161,36 +191,55 @@ const MailingList = () => {
     handleReset();
   };
 
+  const handleSubmitSeq = async () => {
+    const data = dataList.map((v, i) => {
+      return { HYOJI_JUN: i + 1, ID: v.ID };
+    });
+    console.log({ data });
+
+    const fd = new FormData();
+    fd.append('TYPE', 'SEQ_UPDATE');
+    fd.append('LIST', JSON.stringify(data));
+
+    const response = await fetch('mastermentenance', {
+      method: 'POST',
+      body: fd,
+    });
+    const result = await response.json();
+
+    if (!result.RES) {
+      window.alert('並び順変更に失敗しました。再度行ってください');
+    }
+  };
+
   return (
     <div>
       <div style={{ margin: 15 }}>メーリングリスト</div>
-      <div>
-        <Container>
-          <Row md={5}>
-            <Col xs={12} md={8}>
-              <DataKbnSelect
-                onChange={handleKbnSelect}
-                dataList={dataKbnList}
-                currentKbn={currentKbn.current}
-              />
-            </Col>
-            <Col xs={6} md={4}>
-              {/* <div style={{ paddingBottom: 10 }}>
-                <Button
-                  className='btn'
-                  variant='primary'
-                  size='sm'
-                  onClick={getMailingList}
-                >
-                  検 索
-                </Button>
-              </div> */}
-            </Col>
-          </Row>
-        </Container>
-      </div>
 
-      <Table striped bordered hover size='sm'>
+      <Container>
+        <Row>
+          <Col sm={10}>
+            <DataKbnSelect
+              onChange={handleKbnSelect}
+              dataList={dataKbnList}
+              currentKbn={currentKbn.current}
+            />
+          </Col>
+          <Col sm={2}>
+            <Button
+              disabled={dataList.length === 0}
+              className='btn_w'
+              size='sm'
+              variant='info'
+              onClick={() => handleSubmitSeq()}
+            >
+              並び順確定
+            </Button>
+          </Col>
+        </Row>
+      </Container>
+
+      <Table bordered striped hover size='sm'>
         <thead>
           <tr>
             <th>区分</th>
@@ -202,13 +251,14 @@ const MailingList = () => {
         <tbody>
           {dataList &&
             dataList.map((item, index) => (
-              <tr key={index}>
+              <tr key={item.ID}>
                 <td>{item.DATA_KBN}</td>
                 <td>{item.USER_NAME}</td>
                 <td>{item.MAIL_ADDRESS}</td>
                 <td>
                   <Button
                     className='btn'
+                    size='sm'
                     variant='outline-success'
                     onClick={() => handleSelectUpdate(item)}
                   >
@@ -216,11 +266,30 @@ const MailingList = () => {
                   </Button>
                   <Button
                     className='btn'
+                    size='sm'
                     variant='outline-danger'
                     onClick={() => handleSubmitDeleteItem(item)}
                   >
                     削除
                   </Button>
+                  <ButtonGroup size='sm'>
+                    <Button
+                      // className='btn'
+                      size='sm'
+                      variant='outline-info'
+                      onClick={() => handleItemMode(index, -1)}
+                    >
+                      ↑
+                    </Button>
+                    <Button
+                      // className='btn'
+                      size='sm'
+                      variant='outline-info'
+                      onClick={() => handleItemMode(index, 1)}
+                    >
+                      ↓
+                    </Button>
+                  </ButtonGroup>
                 </td>
               </tr>
             ))}
@@ -254,7 +323,7 @@ const MailingList = () => {
                 <FormControl
                   aria-label='Small'
                   aria-describedby='inputGroup-sizing-sm'
-                  ref={inputMailAdress}
+                  ref={inputMailAddress}
                 />
               </InputGroup>
             </Col>
@@ -291,7 +360,7 @@ const MailingList = () => {
                 size='lg'
                 block
                 style={{ width: 300 }}
-                onClick={handleSubumitUpdate}
+                onClick={handleSubmitUpdate}
               >
                 {Object.keys(updateItem).length ? '修 正' : '登 録'}
               </Button>

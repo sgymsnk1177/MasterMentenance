@@ -15,7 +15,7 @@ export const sleep = async (timeout, callBack) => {
   );
 };
 
-export const chekInputData = (name, address) => {
+export const checkInputData = (name, address) => {
   let result = true;
 
   if (!name || !address) {

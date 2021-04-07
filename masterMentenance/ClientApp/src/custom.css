@@ -56,10 +56,20 @@ table td {
   word-break: break-all;
 }
 
+.select {
+  width: 750px;
+}
+
 .btn {
   font-size: x-small;
   margin: 5px;
-  width: 80px;
+  width: 65px;
+}
+
+.btn_w {
+  font-size: x-small;
+  margin: 5px;
+  width: 100px;
 }
 
 .flex-end {
