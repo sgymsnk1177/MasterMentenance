@@ -132,6 +132,15 @@ namespace MasterMentenance.Controllers
                     res = gfDeleteMasterData(ID);
                     result = new Hashtable() { { "MSG", "OK" }, { "RES", res } };
                 }
+                // 並び順変更
+                if (TYPE.Equals("SEQ_UPDATE"))
+                {
+                    var JSON_LIST = Request.Form["LIST"].FirstOrDefault();
+                    var LIST = JsonConvert.DeserializeObject<Hashtable[]>(JSON_LIST);
+
+                    res = gfUpdateMasterHyojijun(LIST);
+                    result = new Hashtable() { { "MSG", "OK" }, { "RES", res } };
+                }
                 return result;
             }
             catch
@@ -292,6 +301,45 @@ namespace MasterMentenance.Controllers
                         throw new Exception("error");
                     }
                     tr.Commit();                    
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.ToString());
+                if (tr != null)
+                {
+                    tr.Rollback();
+                }
+                return false;
+            }
+        }
+
+        private static bool gfUpdateMasterHyojijun(Hashtable[] list)
+        {
+            OracleTransaction tr = null;
+
+            try
+            {
+                using (OracleConnection con = new OracleConnection(connectionString))
+                {
+                    con.Open();
+                    tr = con.BeginTransaction();
+
+                    foreach (var row in list)
+                    {
+                        string sql = @"update m_mailing_list a
+                                    set hyoji_jun = "+ row["HYOJI_JUN"] + @"
+                                       ,update_date = sysdate
+                                        where nvl(a.delete_flg,'0') != '1'
+                                        and a.id = " + row["ID"] + @"
+                                     ";
+                        OracleCommand command = new OracleCommand(sql);
+                        command.Connection = con;
+                        var result = command.ExecuteNonQuery();
+                    }
+
+                    tr.Commit();
                 }
                 return true;
             }
