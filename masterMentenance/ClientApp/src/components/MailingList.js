@@ -39,6 +39,19 @@ const MailingList = () => {
   const getDataKbn = async () => {
     try {
       const response = await fetch('mastermentenance?TYPE=GET_DATA_KBN');
+      // const response = await fetch(
+      //   'http://192.168.1.212/WebApi/EpalKyotenRegWebApi/api/GetHaisoList?haiso_kana=%EF%BD%B1',
+      //   {
+      //     method: 'GET',
+      //     // mode: 'cors',
+      //     // credentials: 'include',
+      //     headers: {
+      //       'Access-Control-Allow-Headers': 'Content-Type',
+      //       'Access-Control-Allow-Origin': 'http://192.168.1.212',
+      //       'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+      //     },
+      //   }
+      // );
       const data = await response.json();
 
       setDataKbnList(data.LIST || []);
@@ -216,7 +229,7 @@ const MailingList = () => {
     <div>
       <div style={{ margin: 15 }}>メーリングリスト</div>
 
-      <Container>
+      <Container className='themed-container' fluid={true}>
         <Row>
           <Col sm={10}>
             <DataKbnSelect
@@ -295,85 +308,82 @@ const MailingList = () => {
             ))}
         </tbody>
       </Table>
-
-      <div style={{ flexDirection: 'row' }}>
-        <Container>
-          <Row>
-            <Col>
-              <InputGroup size='sm' className='mb-3 input-area'>
-                <InputGroup.Prepend>
-                  <InputGroup.Text id='inputGroup-sizing-sm'>
-                    対象者
-                  </InputGroup.Text>
-                </InputGroup.Prepend>
-                <FormControl
-                  aria-label='Small'
-                  aria-describedby='inputGroup-sizing-sm'
-                  ref={inputUserName}
-                />
-              </InputGroup>
-            </Col>
-            <Col>
-              <InputGroup size='sm' className='mb-3 input-area'>
-                <InputGroup.Prepend>
-                  <InputGroup.Text id='inputGroup-sizing-sm'>
-                    メールアドレス
-                  </InputGroup.Text>
-                </InputGroup.Prepend>
-                <FormControl
-                  aria-label='Small'
-                  aria-describedby='inputGroup-sizing-sm'
-                  ref={inputMailAddress}
-                />
-              </InputGroup>
-            </Col>
-          </Row>
-        </Container>
-
-        <Container>
-          <Row>
-            <Col>
-              <input
-                type='hidden'
-                style={{ width: '100px' }}
-                readOnly
-                defaultValue={
-                  Object.keys(updateItem).length ? updateItem.KEY : ''
-                }
+      <Container>
+        <Row>
+          <Col>
+            <InputGroup size='sm' className='mb-3 input-area'>
+              <InputGroup.Prepend>
+                <InputGroup.Text id='inputGroup-sizing-sm'>
+                  対象者
+                </InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                aria-label='Small'
+                aria-describedby='inputGroup-sizing-sm'
+                ref={inputUserName}
               />
-            </Col>
-            <Col></Col>
-            <Col>
-              <Button
-                // className='btn flex-end mr-20'
-                variant='secondary'
-                size='lg'
-                block
-                style={{ width: 300 }}
-                onClick={handleReset}
-              >
-                クリア
-              </Button>
-              <Button
-                // className='btn flex-end'
-                variant={Object.keys(updateItem).length ? 'success' : 'info'}
-                size='lg'
-                block
-                style={{ width: 300 }}
-                onClick={handleSubmitUpdate}
-              >
-                {Object.keys(updateItem).length ? '修 正' : '登 録'}
-              </Button>
-            </Col>
-          </Row>
-        </Container>
+            </InputGroup>
+          </Col>
+          <Col>
+            <InputGroup size='sm' className='mb-3 input-area'>
+              <InputGroup.Prepend>
+                <InputGroup.Text id='inputGroup-sizing-sm'>
+                  メールアドレス
+                </InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                aria-label='Small'
+                aria-describedby='inputGroup-sizing-sm'
+                ref={inputMailAddress}
+              />
+            </InputGroup>
+          </Col>
+        </Row>
+      </Container>
 
-        {dispError === '1' && (
-          <Alert variant='danger'>
-            対象者名または、メールアドレスを正しく入力してください。
-          </Alert>
-        )}
-      </div>
+      <Container>
+        <Row>
+          <Col>
+            <input
+              type='hidden'
+              style={{ width: '100px' }}
+              readOnly
+              defaultValue={
+                Object.keys(updateItem).length ? updateItem.KEY : ''
+              }
+            />
+          </Col>
+          <Col></Col>
+          <Col>
+            <Button
+              // className='btn flex-end mr-20'
+              variant='secondary'
+              size='lg'
+              block
+              style={{ width: 300 }}
+              onClick={handleReset}
+            >
+              クリア
+            </Button>
+            <Button
+              // className='btn flex-end'
+              variant={Object.keys(updateItem).length ? 'success' : 'info'}
+              size='lg'
+              block
+              style={{ width: 300 }}
+              onClick={handleSubmitUpdate}
+            >
+              {Object.keys(updateItem).length ? '修 正' : '登 録'}
+            </Button>
+          </Col>
+        </Row>
+      </Container>
+
+      {dispError === '1' && (
+        <Alert variant='danger'>
+          対象者名または、メールアドレスを正しく入力してください。
+        </Alert>
+      )}
     </div>
   );
 };
