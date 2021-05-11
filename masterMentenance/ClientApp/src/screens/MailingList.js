@@ -1,16 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import {
-  FormControl,
-  Table,
-  Button,
-  ButtonGroup,
-  InputGroup,
-  Alert,
-  Container,
-  Row,
-  Col,
-} from 'react-bootstrap';
-import { DataKbnSelect } from '../elemetes/Select';
+import { FormControl, Table, Button, ButtonGroup, InputGroup, Alert, Container, Row, Col } from 'react-bootstrap';
+import { DataKbnSelect } from '../elements/Select';
 import { checkInputData, sleep } from '../util/Common';
 
 const MailingList = () => {
@@ -70,9 +60,7 @@ const MailingList = () => {
 
   const getMailingList = async () => {
     try {
-      const response = await fetch(
-        'mastermentenance?TYPE=GET&DATA_KBN=' + currentKbn.current
-      );
+      const response = await fetch('mastermentenance?TYPE=GET&DATA_KBN=' + currentKbn.current);
       const data = await response.json();
 
       setDatalist(data.LIST || []);
@@ -92,10 +80,7 @@ const MailingList = () => {
 
   const handleItemMode = (index, at) => {
     // console.log(index, at);
-    if (
-      (index === 0 && at === -1) ||
-      (index === dataList.length - 1 && at === 1)
-    ) {
+    if ((index === 0 && at === -1) || (index === dataList.length - 1 && at === 1)) {
       return false;
     }
     if (dataList && dataList.length > 1) {
@@ -145,12 +130,7 @@ const MailingList = () => {
   };
 
   const handleSubmitUpdate = async () => {
-    if (
-      !checkInputData(
-        inputUserName.current.value,
-        inputMailAddress.current.value
-      )
-    ) {
+    if (!checkInputData(inputUserName.current.value, inputMailAddress.current.value)) {
       setDispError('1');
       // Alert表示
       sleep(2000).then(() => {
@@ -227,32 +207,27 @@ const MailingList = () => {
 
   return (
     <div>
-      <div style={{ margin: 15 }}>メーリングリスト</div>
+      <div style={{ margin: 15 }}>メーリングリスト設定</div>
 
-      <Container className='themed-container' fluid={true}>
+      <Container className="themed-container" fluid={true}>
         <Row>
           <Col sm={10}>
-            <DataKbnSelect
-              onChange={handleKbnSelect}
-              dataList={dataKbnList}
-              currentKbn={currentKbn.current}
-            />
+            <DataKbnSelect onChange={handleKbnSelect} dataList={dataKbnList} currentKbn={currentKbn.current} />
           </Col>
           <Col sm={2}>
             <Button
               disabled={dataList.length === 0}
-              className='btn_w'
-              size='sm'
-              variant='info'
-              onClick={() => handleSubmitSeq()}
-            >
+              className="btn_w"
+              size="sm"
+              variant="info"
+              onClick={() => handleSubmitSeq()}>
               並び順確定
             </Button>
           </Col>
         </Row>
       </Container>
 
-      <Table bordered striped hover size='sm'>
+      <Table bordered striped hover size="sm" className="mailing-list-table">
         <thead>
           <tr>
             <th>区分</th>
@@ -269,37 +244,29 @@ const MailingList = () => {
                 <td>{item.USER_NAME}</td>
                 <td>{item.MAIL_ADDRESS}</td>
                 <td>
-                  <Button
-                    className='btn'
-                    size='sm'
-                    variant='outline-success'
-                    onClick={() => handleSelectUpdate(item)}
-                  >
+                  <Button className="btn" size="sm" variant="outline-success" onClick={() => handleSelectUpdate(item)}>
                     修正
                   </Button>
                   <Button
-                    className='btn'
-                    size='sm'
-                    variant='outline-danger'
-                    onClick={() => handleSubmitDeleteItem(item)}
-                  >
+                    className="btn"
+                    size="sm"
+                    variant="outline-danger"
+                    onClick={() => handleSubmitDeleteItem(item)}>
                     削除
                   </Button>
-                  <ButtonGroup size='sm'>
+                  <ButtonGroup size="sm">
                     <Button
                       // className='btn'
-                      size='sm'
-                      variant='outline-info'
-                      onClick={() => handleItemMode(index, -1)}
-                    >
+                      size="sm"
+                      variant="outline-info"
+                      onClick={() => handleItemMode(index, -1)}>
                       ↑
                     </Button>
                     <Button
                       // className='btn'
-                      size='sm'
-                      variant='outline-info'
-                      onClick={() => handleItemMode(index, 1)}
-                    >
+                      size="sm"
+                      variant="outline-info"
+                      onClick={() => handleItemMode(index, 1)}>
                       ↓
                     </Button>
                   </ButtonGroup>
@@ -311,31 +278,19 @@ const MailingList = () => {
       <Container>
         <Row>
           <Col>
-            <InputGroup size='sm' className='mb-3 input-area'>
+            <InputGroup size="sm" className="mb-3 input-area">
               <InputGroup.Prepend>
-                <InputGroup.Text id='inputGroup-sizing-sm'>
-                  対象者
-                </InputGroup.Text>
+                <InputGroup.Text id="inputGroup-sizing-sm">対象者</InputGroup.Text>
               </InputGroup.Prepend>
-              <FormControl
-                aria-label='Small'
-                aria-describedby='inputGroup-sizing-sm'
-                ref={inputUserName}
-              />
+              <FormControl aria-label="Small" aria-describedby="inputGroup-sizing-sm" ref={inputUserName} />
             </InputGroup>
           </Col>
           <Col>
-            <InputGroup size='sm' className='mb-3 input-area'>
+            <InputGroup size="sm" className="mb-3 input-area">
               <InputGroup.Prepend>
-                <InputGroup.Text id='inputGroup-sizing-sm'>
-                  メールアドレス
-                </InputGroup.Text>
+                <InputGroup.Text id="inputGroup-sizing-sm">メールアドレス</InputGroup.Text>
               </InputGroup.Prepend>
-              <FormControl
-                aria-label='Small'
-                aria-describedby='inputGroup-sizing-sm'
-                ref={inputMailAddress}
-              />
+              <FormControl aria-label="Small" aria-describedby="inputGroup-sizing-sm" ref={inputMailAddress} />
             </InputGroup>
           </Col>
         </Row>
@@ -345,45 +300,37 @@ const MailingList = () => {
         <Row>
           <Col>
             <input
-              type='hidden'
+              type="hidden"
               style={{ width: '100px' }}
               readOnly
-              defaultValue={
-                Object.keys(updateItem).length ? updateItem.KEY : ''
-              }
+              defaultValue={Object.keys(updateItem).length ? updateItem.KEY : ''}
             />
           </Col>
           <Col></Col>
           <Col>
             <Button
               // className='btn flex-end mr-20'
-              variant='secondary'
-              size='lg'
+              variant="secondary"
+              size="lg"
               block
               style={{ width: 300 }}
-              onClick={handleReset}
-            >
+              onClick={handleReset}>
               クリア
             </Button>
             <Button
               // className='btn flex-end'
               variant={Object.keys(updateItem).length ? 'success' : 'info'}
-              size='lg'
+              size="lg"
               block
               style={{ width: 300 }}
-              onClick={handleSubmitUpdate}
-            >
+              onClick={handleSubmitUpdate}>
               {Object.keys(updateItem).length ? '修 正' : '登 録'}
             </Button>
           </Col>
         </Row>
       </Container>
 
-      {dispError === '1' && (
-        <Alert variant='danger'>
-          対象者名または、メールアドレスを正しく入力してください。
-        </Alert>
-      )}
+      {dispError === '1' && <Alert variant="danger">対象者名または、メールアドレスを正しく入力してください。</Alert>}
     </div>
   );
 };

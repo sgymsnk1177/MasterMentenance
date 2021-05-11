@@ -23,33 +23,46 @@ tbody {
   height: 500px;
 }
 
-th:nth-child(1) {
+.mailing-list-table th:nth-child(1) {
   width: 200px;
 }
+.mailing-list-table th:nth-child(2) {
+  width: 260px;
+}
 
-th:nth-child(2) {
-  width: 250px;
+.shiten-list-table th:nth-child(1) {
+  width: 350px;
+}
+.shiten-list-table th:nth-child(2) {
+  width: 1000px;
 }
 
 th:nth-child(3) {
-  width: 330px;
-}
-
-th:nth-child(4) {
   width: 350px;
 }
+th:nth-child(4) {
+  width: 500px;
+}
 
-td:nth-child(1) {
-  width: 200px;
+.mailing-list-table td:nth-child(1) {
+  width: 220px;
 }
-td:nth-child(2) {
-  width: 250px;
+.mailing-list-table td:nth-child(2) {
+  width: 280px;
 }
+
+.shiten-list-table td:nth-child(1) {
+  width: 370px;
+}
+.shiten-list-table td:nth-child(2) {
+  width: 1000px;
+}
+
 td:nth-child(3) {
-  width: 330px;
+  width: 370px;
 }
 td:nth-child(4) {
-  width: 350px;
+  width: 500px;
 }
 
 table td {
@@ -79,4 +92,69 @@ table td {
 .input-area {
   width: 500px;
   margin: 5px;
+}
+
+.react-autosuggest__container {
+  position: relative;
+}
+
+.react-autosuggest__input {
+  width: 240px;
+  height: 36px;
+  padding: 6px 12px;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  margin-left: 16px;
+}
+
+.react-autosuggest__input--focused {
+  outline: none;
+}
+
+.react-autosuggest__input--open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+
+.react-autosuggest__suggestions-container--open {
+  display: block;
+  position: absolute;
+  top: 51px;
+  width: 260px;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  font-family: Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  max-height: 350px;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.react-autosuggest__suggestions-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.react-autosuggest__suggestion {
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.react-autosuggest__suggestion--highlighted {
+  background-color: #ddd;
+}
+
+.home_link {
+  margin: 16px;
 }
